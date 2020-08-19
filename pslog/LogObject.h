@@ -20,9 +20,11 @@ public:
 	std::string msg;
 	std::chrono::time_point<std::chrono::system_clock> time;
 	std::thread::id thread_id;
+	LogObject(LogObject& rhs) = default;
+	~LogObject() = default;
 private:
 	LogObject() = default;
-	~LogObject() = default;
+
 
 	
 

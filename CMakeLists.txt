@@ -4,6 +4,7 @@
 cmake_minimum_required (VERSION 3.8)
 
 project ("pslog")
+SET(BUILD_GMOCK)
 # Download and unpack googletest at configure time
 configure_file(CMakeLists.txt.in googletest-download/CMakeLists.txt)
 execute_process(COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}" .
@@ -27,7 +28,7 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 # the gtest and gtest_main targets.
 add_subdirectory(${CMAKE_CURRENT_BINARY_DIR}/googletest-src
                  ${CMAKE_CURRENT_BINARY_DIR}/googletest-build
-                 EXCLUDE_FROM_ALL)
+                 )
 
 # The gtest/gtest_main targets carry header search path
 # dependencies automatically when using CMake 2.8.11 or

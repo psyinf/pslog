@@ -5,6 +5,7 @@
 
 namespace pslog
 {
+	class LogObject;
 	class Logger
 	{
 	public:
@@ -14,11 +15,9 @@ namespace pslog
 		Logger() = default;
 		const std::string getName() const;
 
-		void log(Level logLevel, std::string&& msg);
+		LogObject log(Level logLevel, std::string&& msg);
 
-		void log(std::string&& msg) {
-			log(Level::LVL_INFO, std::move(msg));
-		}
+		LogObject log(std::string&& msg);
 
 		void setLevel(Level level);
 	private:

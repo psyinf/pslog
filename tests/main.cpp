@@ -1,16 +1,45 @@
 #include <gtest/gtest.h>
+#include <gmock/gmock.h>
+
+
 #include <LoggerRegistry.h>
-TEST(Addition, CanAddTwoNumbers)
+#include <Logger.h>
+
+
+namespace
 {
-	EXPECT_EQ(4, 2 + 2);
-}
+	class SimpleLoggerTest : public ::testing::Test
+	{
+	protected:
+	
+		SimpleLoggerTest() 
+		{}
+
+		virtual ~SimpleLoggerTest() 
+		{}
+
+		
+	};
+
+	using namespace ::testing;
+	TEST_F(SimpleLoggerTest, CreateLogger)
+	{
+		static auto l = pslog::LoggerRegistry::make<pslog::Logger>("b1");
+		testing::internal::CaptureStdout();
+		pslog::LogObject logObj = l->log(pslog::Level::LVL_INFO, "Hello123");
+		std::string output = testing::internal::GetCapturedStdout();
+		ASSERT_THAT(output, HasSubstr("Hello123"));
+		ASSERT_THAT(output, HasSubstr(" INFO "));
+		ASSERT_THAT(logObj,Field(&pslog::LogObject::msg, StrEq("Hello123")));
+		ASSERT_THAT(logObj, Field(&pslog::LogObject::context, StrEq("b1")));
+		ASSERT_THAT(logObj, Field(&pslog::LogObject::level, Eq(pslog::Level::LVL_INFO)));
+	}
+
+} // Namespace
 
 
-TEST(pslog, CreateLogger)
-{
-	static auto l = pslog::LoggerRegistry::make<pslog::Logger>("b1");
 
-}
+
 int main(int argc, char* argv[])
 {
 	testing::InitGoogleTest(&argc, argv);
