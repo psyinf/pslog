@@ -1,16 +1,19 @@
 #pragma once
+
 #include "LogSink.h"
+
 #include <iostream>
 
-namespace pslog {
+
+namespace pslog
+{
 class DefaultSink : public LogSink
 {
 public:
-	virtual void write(const std::string& s, const LogObject& l) override
-	{
-		std::cout << s << "\n";
-	}
-
+    void write(std::string const& s, LogObject const& l) override
+    {
+        std::cout << s << '\n';
+    }
 };
 
-}
+} // namespace pslog

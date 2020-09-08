@@ -1,13 +1,13 @@
 #pragma once
-#include "FileSink.h"
-#include "ColoredConsoleSink.h"
+#include "BasicFileSink.h"
+#include "DefaultSink.h"
 #include <ostream>
 //#TODO generic 
-
+namespace pslog {
 class MultiSink : public pslog::LogSink	
 {
-	FileSink			mFileSink;
-	ColoredConsoleSink	mColoredConsoleSink;
+	BasicFileSink			mFileSink;
+	DefaultSink	mColoredConsoleSink;
 public:
 	MultiSink()
 		:mColoredConsoleSink()
@@ -22,4 +22,5 @@ public:
 	}
 
 };
+} //namespace pslog
 

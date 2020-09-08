@@ -1,11 +1,14 @@
 #pragma once
+
 #include <string>
+
+
 namespace pslog
 {
 class LogObject;
-class LogFormatter 
+class LogFormatter
 {
 public:
-	virtual std::string format(const LogObject&) = 0;
+    virtual auto format(LogObject const&) -> std::string = 0;
 };
-}
+} // namespace pslog

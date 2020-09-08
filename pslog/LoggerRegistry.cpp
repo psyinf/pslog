@@ -1,69 +1,79 @@
 #include "LoggerRegistry.h"
 
+#include <algorithm>
 
 
-using namespace pslog;
-
+namespace pslog
+{
 void LoggerRegistry::registerLogger(LoggerConfig&& lc)
 {
-	getLoggerMap().emplace(lc.logger->getName(), lc);
+    getLoggerMap().emplace(lc.logger->getName(), lc);
 }
 
-LogObject& LoggerRegistry::log(const Logger& logger)
+auto LoggerRegistry::log(Logger const& logger) -> LogObject&
 {
-	thread_local LogObject l;
-	l.context = logger.getName();
-	l.time = std::chrono::system_clock::now();
-	l.thread_id = std::this_thread::get_id();
-	return l;
+    thread_local LogObject l;
+    l.context   = logger.getName();
+    l.time      = std::chrono::system_clock::now();
+    l.thread_id = std::this_thread::get_id();
+    return l;
 }
 
-void LoggerRegistry::put(const LogObject& l)
+void LoggerRegistry::put(LogObject const& l)
 {
-	const auto& logCfg = getLoggerMap().at(l.context);
-	logCfg.sink->write(logCfg.formatter->format(l), l);
+    const auto& logCfg = getLoggerMap().at(l.context);
+    logCfg.sink->write(logCfg.formatter->format(l), l);
 }
 
-void LoggerRegistry::setLevel(const std::string& loggerName, Level level)
+void LoggerRegistry::setLevel(std::string const& loggerName, Level level)
 {
-	if (getLoggerMap().end() == getLoggerMap().find(loggerName))
-	{
-		getConfigMap().emplace(loggerName, level);
-	}
-	else
-	{
-		getLoggerMap().at(loggerName).logger->setLevel(level);
-	}
+    if (getLoggerMap().end() == getLoggerMap().find(loggerName))
+    {
+        getConfigMap().emplace(loggerName, level);
+    }
+    else
+    {
+        getLoggerMap().at(loggerName).logger->setLevel(level);
+    }
 }
 
-void LoggerRegistry::setFormater(const std::string& loggerName, std::shared_ptr<LogFormatter> formatter)
+void LoggerRegistry::setFormater(std::string const& loggerName, std::shared_ptr<LogFormatter> formatter)
 {
-	getLoggerMap().at(loggerName).formatter = formatter;
+    getLoggerMap().at(loggerName).formatter = formatter;
 }
 
-void LoggerRegistry::setSink(const std::string& loggerName, std::shared_ptr<LogSink> sink)
+void LoggerRegistry::setSink(std::string const& loggerName, std::shared_ptr<LogSink> sink)
 {
-	getLoggerMap().at(loggerName).sink = sink;
+    getLoggerMap().at(loggerName).sink = sink;
 }
 
-const std::shared_ptr<pslog::LogFormatter> pslog::LoggerRegistry::getFormatter(const std::string& loggerName)
+auto LoggerRegistry::getFormatter(std::string const& loggerName) -> std::shared_ptr<LogFormatter> const
 {
-	return getLoggerMap().at(loggerName).formatter;
+    return getLoggerMap().at(loggerName).formatter;
 }
 
-const std::shared_ptr<pslog::LogSink> pslog::LoggerRegistry::getSink(const std::string& loggerName)
+auto LoggerRegistry::getSink(std::string const& loggerName) -> const std::shared_ptr<LogSink>
 {
-	return getLoggerMap().at(loggerName).sink;
+    return getLoggerMap().at(loggerName).sink;
 }
 
-LoggerRegistry::LoggerMap& pslog::LoggerRegistry::getLoggerMap()
+auto LoggerRegistry::getLoggerNames() -> std::vector<std::string>
 {
-	static LoggerMap loggerMap;
-	return loggerMap;
+    auto                     map = getLoggerMap();
+    std::vector<std::string> names;
+    std::for_each(map.begin(), map.end(), [&names](auto entry) { names.push_back(entry.first); });
+    return names;
 }
 
-pslog::LoggerRegistry::ConfigMap& pslog::LoggerRegistry::getConfigMap()
+auto LoggerRegistry::getLoggerMap() -> LoggerRegistry::LoggerMap&
 {
-	static ConfigMap confMap;
-	return confMap;
+    static LoggerMap loggerMap;
+    return loggerMap;
 }
+
+auto LoggerRegistry::getConfigMap() -> LoggerRegistry::ConfigMap&
+{
+    static ConfigMap confMap;
+    return confMap;
+}
+} // namespace pslog

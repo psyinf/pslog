@@ -1,13 +1,16 @@
 #pragma once
+
 #include <string>
 
-namespace pslog {
+
+namespace pslog
+{
 
 class LogObject;
 class LogSink
 {
 public:
-	virtual void write(const std::string&, const LogObject& l ) = 0;
+    virtual void write(std::string const&, LogObject const& l) = 0;
 };
 
-}
+} // namespace pslog

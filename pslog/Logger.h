@@ -1,29 +1,34 @@
 #pragma once
-#include "Level.h"
 
+#include "Level.h"
+#include "LogObject.h"
 #include <string>
+
 
 namespace pslog
 {
-	class LogObject;
-	class Logger
-	{
-	public:
-		//TODO: make private
-		Logger(const std::string& name);
+class Logger
+{
+public:
+    //TODO: make private
+    Logger(std::string const& name);
 
-		Logger() = default;
-		const std::string getName() const;
+    Logger() = default;
 
-		LogObject log(Level logLevel, std::string&& msg);
+    auto getName() const -> std::string const;
 
-		LogObject log(std::string&& msg);
+    auto log(Level logLevel, std::string&& msg) ->LogObject;
 
-		void setLevel(Level level);
-	private:
+    void log(std::string&& msg)
+    {
+        log(Level::LVL_INFO, std::move(msg));
+    }
 
-		Level		mMinLevel = LVL_INFO;
-		std::string	mName;
-	};
+    void setLevel(Level level);
 
-}
+private:
+    Level       mMinLevel = Level::LVL_INFO;
+    std::string mName;
+};
+
+} // namespace pslog
